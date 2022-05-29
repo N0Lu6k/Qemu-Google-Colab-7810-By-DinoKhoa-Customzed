@@ -11,6 +11,7 @@ sudo qemu-system-x86_64 \
   -m 8G \
   -cpu EPYC \
   -boot order=d \
+  -drive file=win.iso,media=cdrom \
   -drive file=win.img,format=raw,if=virtio \
   -drive file=virtio-win.iso,media=cdrom \
   -device usb-ehci,id=usb,bus=pci.0,addr=0x4 \
