@@ -1,20 +1,9 @@
-sudo apt-get update && apt-get install qemu -y
-sudo apt install qemu-utils -y
-sudo apt install qemu-system-x86-xen -y
-sudo apt install qemu-system-x86 -y
-qemu-img create -f raw win.img 32G
-wget -O virtio-win.iso 'https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.215-1/virtio-win-0.1.215.iso'
+wget -O bios64.bin "https://github.com/BlankOn/ovmf-blobs/raw/master/bios64.bin"
 wget -O win.iso "https://go.microsoft.com/fwlink/p/?LinkID=2195404&clcid=0x409&culture=en-us&country=US"
-clear
-curl --silent --show-error http://127.0.0.1:4040/api/tunnels | sed -nE 's/.*public_url":"tcp:..([^"]*).*/\1/p'
-sudo qemu-system-x86_64 \
-  -m 8G \
-  -cpu EPYC \
-  -boot order=d \
-  -drive file=win.iso,media=cdrom \
-  -drive file=win.img,format=raw,if=virtio \
-  -drive file=virtio-win.iso,media=cdrom \
-  -device usb-ehci,id=usb,bus=pci.0,addr=0x4 \
-  -device usb-tablet \
-  -vnc :0 \
-  -smp cores=2 \
+wget -O ngrok.tgz "https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz"
+tar -xf ngrok.tgz
+./ngrok authtoken 2fAbst1jCEmTCQSw54p85GlSsPw_22uSS7tDPAd6T1SoPpwSN
+sudo apt update
+sudo apt install qemu-kvm -y
+qemu-img create -f raw win.img 32G
+sudo qemu-system-x86_64 -m 12G -smp 4 -cpu host -boot order=c -drive file=win.iso,media=cdrom -drive file=win.img,format=raw -device usb-ehci,id=usb,bus=pci.0,addr=0x4 -device usb-tablet -vnc :0 -smp cores=4 -device e1000,netdev=n0 -netdev user,id=n0 -vga qxl -accel kvm -bios bios64.bin
